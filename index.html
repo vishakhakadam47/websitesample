@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VIMORA ACTIVEWEAR — Interactive Showroom Rack</title>
+  
+  <!-- Luxury Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       CSS VARIABLES & PALETTES
+       ========================================================================== */
+    :root {
+      /* Active Fabric Colors (Default: Signature Olive) */
+      --fabric-base: #4b5240;
+      --fabric-dark: #363c2d;
+      --fabric-light: #626b54;
+      --fabric-accent: #788267;
+
+      /* Showroom Environment */
+      --bg-showroom: #F4F1EA;
+      --bg-wall: #EAE6DC;
+      --bg-card: #FFFFFF;
+      --text-main: #181916;
+      --text-muted: #6B6D65;
+      --text-light: #9B9C94;
+      --rail-steel: #D2D5D8;
+      --rail-dark: #8E9399;
+      --hanger-wood: #B88B58;
+      --hanger-metal: #555A60;
+
+      --font-serif: 'Cinzel', serif;
+      --font-sans: 'Plus Jakarta Sans', sans-serif;
+      --ease-bounce: cubic-bezier(0.25, 1.4, 0.4, 1);
+      --ease-smooth: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--bg-showroom);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      overflow-x: hidden;
+      display: flex;
+      flex-direction: column;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Announcement */
+    .top-bar {
+      background: #191B17;
+      color: #E2DDD3;
+      text-align: center;
+      padding: 8px 16px;
+      font-size: 0.72rem;
+      letter-spacing: 0.22em;
+      text-transform: uppercase;
+      font-weight: 500;
+    }
+
+    /* Header */
+    .brand-header {
+      padding: 24px 36px;
+      text-align: center;
+      position: relative;
+      border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+      background: rgba(244, 241, 234, 0.85);
+      backdrop-filter: blur(10px);
+      z-index: 50;
+    }
+
+    .brand-logo {
+      font-family: var(--font-serif);
+      font-size: 2.1rem;
+      letter-spacing: 0.32em;
+      font-weight: 700;
+      margin-bottom: 12px;
+      line-height: 1;
+    }
+
+    .nav-links {
+      display: flex;
+      justify-content: center;
+      gap: 32px;
+      margin-bottom: 16px;
+      flex-wrap: wrap;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.78rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      font-weight: 600;
+      transition: color 0.25s;
+    }
+
+    .nav-links a:hover, .nav-links a.active {
+      color: var(--text-main);
+    }
+
+    .section-tagline {
+      font-size: 0.72rem;
+      letter-spacing: 0.26em;
+      text-transform: uppercase;
+      color: var(--text-muted);
+      font-weight: 600;
+      display: inline-block;
+      padding-top: 10px;
+      border-top: 1px solid rgba(0, 0, 0, 0.08);
+    }
+
+    .cart-trigger {
+      position: absolute;
+      right: 36px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 8px 14px;
+      border-radius: 20px;
+      background: #FFFFFF;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+    }
+
+    .cart-count {
+      background: var(--fabric-base);
+      color: #fff;
+      font-size: 0.7rem;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.3s;
+    }
+
+    /* Colorway Toolbar */
+    .colorway-switcher {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      padding: 16px 20px;
+      background: var(--bg-wall);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+      flex-wrap: wrap;
+    }
+
+    .colorway-label {
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--text-muted);
+      margin-right: 8px;
+    }
+
+    .color-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 14px;
+      border-radius: 24px;
+      background: #FFFFFF;
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+      font-size: 0.72rem;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      transition: all 0.25s ease;
+    }
+
+    .color-btn .swatch-dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.15);
+    }
+
+    .color-btn:hover, .color-btn.active {
+      background: var(--text-main);
+      color: #FFFFFF;
+      border-color: var(--text-main);
+      transform: translateY(-1px);
+    }
+
+    /* ==========================================================================
+       THE CLOTHING RACK SHOWROOM (THE HERO EFFECT)
+       ========================================================================== */
+    .showroom-stage {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px 80px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Wall Depth Shadow */
+    .showroom-stage::before {
+      content: '';
+      position: absolute;
+      top: 140px;
+      left: 5%;
+      right: 5%;
+      height: 280px;
+      background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.06) 0%, rgba(0, 0, 0, 0) 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .rack-viewport {
+      width: 100%;
+      max-width: 1380px;
+      position: relative;
+      perspective: 1400px;
+      perspective-origin: 50% 180px;
+      margin: 0 auto;
+    }
+
+    /* The Continuous Hanging Rod */
+    .hanging-rod-assembly {
+      position: relative;
+      width: 100%;
+      height: 18px;
+      margin-bottom: -18px;
+      z-index: 10;
+    }
+
+    .hanging-rod {
+      width: 100%;
+      height: 12px;
+      background: linear-gradient(180deg, #FFFFFF 0%, var(--rail-steel) 40%, var(--rail-dark) 100%);
+      border-radius: 6px;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.2), inset 0 1px 2px #FFFFFF;
+      position: relative;
+    }
+
+    /* End Brackets & Screws */
+    .rod-bracket {
+      position: absolute;
+      top: -7px;
+      width: 22px;
+      height: 26px;
+      background: linear-gradient(180deg, #9FA4AA, #6B7077);
+      border-radius: 4px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+    }
+
+    .rod-bracket.left { left: 0; }
+    .rod-bracket.right { right: 0; }
+
+    /* The Hanging Clothes Rail Track */
+    .clothes-track {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 0 40px;
+      transform-style: preserve-3d;
+      min-height: 480px;
+    }
+
+    /* ==========================================================================
+       CLOTHING ITEM (HANGER + 3D GARMENT)
+       ========================================================================== */
+    .clothing-item {
+      position: relative;
+      width: 105px;
+      cursor: pointer;
+      transform-origin: 50% 0;
+      transform-style: preserve-3d;
+      transition: transform 0.65s var(--ease-bounce), width 0.5s var(--ease-smooth), margin 0.5s var(--ease-smooth);
+      will-change: transform, width;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    /* State 1: PROFILE VIEW (Stacked sideways on the rack like in a boutique) */
+    .clothing-item.is-profile {
+      transform: rotateY(-68deg) translateZ(0);
+      opacity: 0.88;
+    }
+
+    .clothing-item.is-profile:hover {
+      transform: rotateY(-40deg) translateY(6px) translateZ(25px);
+      opacity: 1;
+    }
+
+    /* State 2: FRONT-FACING / SELECTED HERO PIECE */
+    .clothing-item.is-front {
+      width: 280px;
+      margin: 0 24px;
+      transform: rotateY(0deg) translateY(14px) translateZ(80px) scale(1.08);
+      z-index: 25;
+      opacity: 1;
+    }
+
+    /* Subtle Pendulum Swing Physics */
+    .clothing-item.swinging {
+      animation: hangerSwing 1.4s ease-in-out;
+    }
+
+    @keyframes hangerSwing {
+      0%   { transform: rotateY(0deg) rotateZ(0deg); }
+      20%  { transform: rotateY(0deg) rotateZ(4.5deg) translateY(2px); }
+      40%  { transform: rotateY(0deg) rotateZ(-3.2deg); }
+      60%  { transform: rotateY(0deg) rotateZ(1.8deg); }
+      80%  { transform: rotateY(0deg) rotateZ(-0.8deg); }
+      100% { transform: rotateY(0deg) rotateZ(0deg); }
+    }
+
+    /* Metallic Hanger Assembly */
+    .hanger-assembly {
+      width: 80px;
+      height: 44px;
+      position: relative;
+      margin-bottom: -6px;
+      z-index: 12;
+      pointer-events: none;
+    }
+
+    /* Realistic Hanger Hook catching on the rail */
+    .hanger-hook {
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 18px;
+      height: 24px;
+      border: 2.8px solid var(--hanger-metal);
+      border-bottom: none;
+      border-top-left-radius: 12px;
+      border-top-right-radius: 12px;
+      box-shadow: 1px 1px 3px rgba(0,0,0,0.25);
+    }
+
+    .hanger-hook::before {
+      content: '';
+      position: absolute;
+      right: -5px;
+      top: 4px;
+      width: 6px;
+      height: 2.8px;
+      background: var(--hanger-metal);
+      border-radius: 2px;
+    }
+
+    /* Triangular Hanger Frame */
+    .hanger-frame {
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 76px;
+      height: 24px;
+      border-top: 3.5px solid var(--hanger-wood);
+      border-radius: 50% 50% 0 0;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.18);
+    }
+
+    /* Garment Silhouette Wrapper */
+    .garment-card {
+      width: 100%;
+      aspect-ratio: 1 / 1.25;
+      background: transparent;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      filter: drop-shadow(0 15px 22px rgba(28, 29, 25, 0.16));
+      transition: filter 0.4s;
+    }
+
+    .clothing-item.is-front .garment-card {
+      filter: drop-shadow(0 25px 36px rgba(28, 29, 25, 0.24));
+    }
+
+    .garment-svg {
+      width: 100%;
+      height: 100%;
+      transition: transform 0.4s;
+    }
+
+    /* Dynamic SVG Fabric Shading */
+    .fabric-main {
+      fill: var(--fabric-base);
+      transition: fill 0.4s ease;
+    }
+
+    .fabric-shadow {
+      fill: var(--fabric-dark);
+      transition: fill 0.4s ease;
+    }
+
+    .fabric-light {
+      fill: var(--fabric-light);
+      transition: fill 0.4s ease;
+    }
+
+    .fabric-stitch {
+      stroke: var(--fabric-accent);
+      stroke-width: 1.2;
+      stroke-dasharray: 2 2;
+      opacity: 0.5;
+    }
+
+    /* Floating Item Detail Badge on Active Garment */
+    .item-meta-overlay {
+      position: absolute;
+      bottom: -68px;
+      left: 50%;
+      transform: translateX(-50%) translateY(10px);
+      width: 220px;
+      text-align: center;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.4s var(--ease-smooth);
+      pointer-events: none;
+    }
+
+    .clothing-item.is-front .item-meta-overlay {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(-50%) translateY(0);
+      pointer-events: auto;
+    }
+
+    .item-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+      white-space: nowrap;
+    }
+
+    .item-price {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      letter-spacing: 0.05em;
+    }
+
+    .item-tag {
+      display: inline-block;
+      font-size: 0.62rem;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      font-weight: 700;
+      background: var(--bg-card);
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-top: 4px;
+      border: 1px solid rgba(0,0,0,0.08);
+    }
+
+    /* ==========================================================================
+       ACTIVE PRODUCT INSPECTION DOCK (BOTTOM ACTION)
+       ========================================================================== */
+    .showroom-action-dock {
+      margin-top: 75px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 16px;
+      z-index: 30;
+    }
+
+    .dock-size-picker {
+      display: flex;
+      gap: 8px;
+      background: #FFFFFF;
+      padding: 4px 6px;
+      border-radius: 30px;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.06);
+    }
+
+    .size-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: none;
+      background: transparent;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .size-btn:hover, .size-btn.active {
+      background: var(--text-main);
+      color: #FFFFFF;
+    }
+
+    .dock-cta-btn {
+      background: var(--text-main);
+      color: #FFFFFF;
+      padding: 16px 42px;
+      border-radius: 30px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 10px 25px -5px rgba(24, 25, 22, 0.3);
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      transition: all 0.3s var(--ease-smooth);
+    }
+
+    .dock-cta-btn:hover {
+      background: var(--fabric-base);
+      transform: translateY(-2px);
+      box-shadow: 0 14px 30px -5px rgba(24, 25, 22, 0.4);
+    }
+
+    .dock-hint {
+      font-size: 0.7rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      color: var(--text-light);
+    }
+
+    /* ==========================================================================
+       CART SLIDE-OUT DRAWER
+       ========================================================================== */
+    .cart-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(4px);
+      z-index: 1000;
+      opacity: 0;
+      visibility: hidden;
+      transition: all 0.35s ease;
+    }
+
+    .cart-overlay.open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .cart-drawer {
+      position: fixed;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      max-width: 400px;
+      background: #FFFFFF;
+      box-shadow: -10px 0 30px rgba(0, 0, 0, 0.15);
+      transform: translateX(100%);
+      transition: transform 0.4s var(--ease-smooth);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .cart-overlay.open .cart-drawer {
+      transform: translateX(0);
+    }
+
+    .cart-head {
+      padding: 24px;
+      border-bottom: 1px solid rgba(0,0,0,0.08);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .cart-head h3 {
+      font-family: var(--font-serif);
+      font-size: 1.1rem;
+      letter-spacing: 0.14em;
+    }
+
+    .cart-close {
+      background: none;
+      border: none;
+      font-size: 1.6rem;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .cart-items {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+    }
+
+    .cart-empty-msg {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.85rem;
+      margin-top: 60px;
+    }
+
+    .cart-item-row {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 16px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      align-items: center;
+    }
+
+    .cart-item-thumb {
+      width: 60px;
+      height: 70px;
+      background: #F1EDE4;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px;
+    }
+
+    .cart-item-info {
+      flex: 1;
+    }
+
+    .cart-item-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .cart-item-meta {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      margin: 2px 0 6px;
+    }
+
+    .cart-footer {
+      padding: 24px;
+      background: #F9F8F5;
+      border-top: 1px solid rgba(0,0,0,0.08);
+    }
+
+    .cart-subtotal {
+      display: flex;
+      justify-content: space-between;
+      font-weight: 700;
+      font-size: 0.95rem;
+      margin-bottom: 16px;
+    }
+
+    .checkout-btn {
+      width: 100%;
+      background: var(--text-main);
+      color: #fff;
+      padding: 16px;
+      border-radius: 6px;
+      border: none;
+      font-weight: 700;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.25s;
+    }
+
+    .checkout-btn:hover {
+      background: var(--fabric-base);
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .clothing-item {
+        width: 80px;
+      }
+      .clothing-item.is-front {
+        width: 220px;
+        margin: 0 10px;
+      }
+      .clothes-track {
+        gap: 8px;
+        padding: 0 16px;
+      }
+      .brand-logo {
+        font-size: 1.6rem;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .nav-links {
+        gap: 16px;
+      }
+      .clothing-item {
+        width: 60px;
+      }
+      .clothing-item.is-front {
+        width: 180px;
+      }
+      .cart-trigger span:first-child {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Top Banner -->
+  <div class="top-bar">
+    Fall 2024 Collection — Built for Movement • Sustainable Streetwear
+  </div>
+
+  <!-- Header -->
+  <header class="brand-header">
+    <h1 class="brand-logo">VIMORA</h1>
+    <nav class="nav-links">
+      <a href="#" class="active">Showroom</a>
+      <a href="#">Men's SS24</a>
+      <a href="#">Women's SS24</a>
+      <a href="#">The Craft</a>
+      <a href="#">Sustainability</a>
+    </nav>
+    <div class="section-tagline">NEW COLLECTION / TECHNICAL ACTIVEWEAR</div>
+
+    <button class="cart-trigger" onclick="toggleCart(true)">
+      <span>Bag</span>
+      <span class="cart-count" id="cartCount">0</span>
+    </button>
+  </header>
+
+  <!-- Colorway Palette Switcher -->
+  <div class="colorway-switcher">
+    <span class="colorway-label">Showroom Palette:</span>
+    <button class="color-btn active" onclick="setPalette('olive', this)">
+      <span class="swatch-dot" style="background:#4b5240;"></span> Signature Olive
+    </button>
+    <button class="color-btn" onclick="setPalette('sand', this)">
+      <span class="swatch-dot" style="background:#D5CEBF;"></span> Desert Sand
+    </button>
+    <button class="color-btn" onclick="setPalette('obsidian', this)">
+      <span class="swatch-dot" style="background:#222324;"></span> Obsidian Slate
+    </button>
+    <button class="color-btn" onclick="setPalette('clay', this)">
+      <span class="swatch-dot" style="background:#8C5847;"></span> Terracotta
+    </button>
+    <button class="color-btn" onclick="setPalette('mist', this)">
+      <span class="swatch-dot" style="background:#7A8982;"></span> Mineral Mist
+    </button>
+  </div>
+
+  <!-- ==========================================================================
+       THE CLOTHING RACK SHOWROOM
+       ========================================================================== -->
+  <main class="showroom-stage">
+    <div class="rack-viewport">
+      
+      <!-- The Horizontal Metal Hanging Rod -->
+      <div class="hanging-rod-assembly">
+        <div class="rod-bracket left"></div>
+        <div class="hanging-rod"></div>
+        <div class="rod-bracket right"></div>
+      </div>
+
+      <!-- The Clothes Track with Items on Hangers -->
+      <div class="clothes-track" id="clothesTrack">
+        
+        <!-- ITEM 1: Elevate Quarter-Zip (Selected Front-Facing by Default) -->
+        <div class="clothing-item is-front" data-id="1" data-title="Elevate Quarter-Zip" data-price="98" data-tag="220 GSM Fleece" onclick="selectGarment(this)">
+          <div class="hanger-assembly">
+            <div class="hanger-hook"></div>
+            <div class="hanger-frame"></div>
+          </div>
+          <div class="garment-card">
+            <!-- Front Quarter-Zip Vector -->
+            <svg class="garment-svg" viewBox="0 0 200 240" fill="none">
+              <!-- High Collar -->
+              <path class="fabric-main" d="M72 40 L128 40 L132 68 L68 68 Z"/>
+              <!-- Metal Zip -->
+              <line x1="100" y1="40" x2="100" y2="105" stroke="#FFFFFF" stroke-width="2.5" opacity="0.8"/>
+              <circle cx="100" cy="107" r="3" fill="#222"/>
+              <!-- Body -->
+              <path class="fabric-main" d="M68 68 L25 110 L45 200 L155 200 L175 110 L132 68 Z"/>
+              <!-- Side Shading & Stitching -->
+              <path class="fabric-shadow" d="M25 110 L45 200 L65 200 L45 125 Z" opacity="0.4"/>
+              <path class="fabric-shadow" d="M175 110 L155 200 L135 200 L155 125 Z" opacity="0.4"/>
+              <path class="fabric-stitch" d="M68 68 L92 125 M132 68 L108 125"/>
+            </svg>
+          </div>
+          <div class="item-meta-overlay">
+            <div class="item-title">Elevate Quarter-Zip</div>
+            <div class="item-price">$98</div>
+            <div class="item-tag">220 GSM Fleece • Breathable</div>
+          </div>
+        </div>
+
+        <!-- ITEM 2: Core Tank (Profile View) -->
+        <div class="clothing-item is-profile" data-id="2" data-title="Core Tank" data-price="48" data-tag="140 GSM Nylon" onclick="selectGarment(this)">
+          <div class="hanger-assembly">
+            <div class="hanger-hook"></div>
+            <div class="hanger-frame"></div>
+          </div>
+          <div class="garment-card">
+            <svg class="garment-svg" viewBox="0 0 200 240" fill="none">
+              <!-- Tank Top -->
+              <path class="fabric-main" d="M55 45 C70 65 80 65 92 45 L108 45 C120 65 130 65 145 45 L155 85 C145 100 145 110 150 205 H50 C55 110 55 100 45 85 Z"/>
+              <path class="fabric-shadow" d="M50 205 L45 85 L65 95 L65 205 Z" opacity="0.3"/>
+              <path class="fabric-stitch" d="M75 52 C88 68 112 68 125 52"/>
+            </svg>
+          </div>
+          <div class="item-meta-overlay">
+            <div class="item-title">Core Tank</div>
+            <div class="item-price">$48</div>
+            <div class="item-tag">140 GSM • 4-Way Stretch</div>
+          </div>
+        </div>
+
+        <!-- ITEM 3: Trail Jogger (Profile View) -->
+        <div class="clothing-item is-profile" data-id="3" data-title="Trail Jogger" data-price="88" data-tag="200 GSM Tapered" onclick="selectGarment(this)">
+          <div class="hanger-assembly">
+            <div class="hanger-hook"></div>
+            <div class="hanger-frame"></div>
+          </div>
+          <div class="garment-card">
+            <svg class="garment-svg" viewBox="0 0 200 240" fill="none">
+              <!-- Joggers Folded on Hanger -->
+              <rect class="fabric-shadow" x="50" y="45" width="100" height="22" rx="4"/>
+              <path class="fabric-main" d="M52 67 L148 67 L155 195 L125 195 L95 110 L65 195 L45 195 Z"/>
+              <!-- Rib Cuffs -->
+              <rect class="fabric-dark" x="43" y="195" width="24" height="15"/>
+              <rect class="fabric-dark" x="123" y="195" width="24" height="15"/>
+              <!-- Drawstring -->
+              <path d="M88 62 C88 78 80 88 80 102" stroke="#FFFFFF" stroke-width="2" stroke-linecap="round" opacity="0.7"/>
+            </svg>
+          </div>
+          <div class="item-meta-overlay">
+            <div class="item-title">Trail Jogger</div>
+            <div class="item-price">$88</div>
+            <div class="item-tag">200 GSM • Tapered Fit</div>
+          </div>
+        </div>
+
+        <!-- ITEM 4: Alpine Crop Jacket (Profile View) -->
+        <div class="clothing-item is-profile" data-id="4" data-title="Alpine Crop Jacket" data-price="92" data-tag="Cropped Fit" onclick="selectGarment(this)">
+          <div class="hanger-assembly">
+            <div class="hanger-hook"></div>
+            <div class="hanger-frame"></div>
+          </div>
+          <div class="garment-card">
+            <svg class="garment-svg" viewBox="0 0 200 240" fill="none">
+              <path class="fabric-main" d="M70 45 L130 45 L135 72 L65 72 Z"/>
+              <line x1="100" y1="45" x2="100" y2="105" stroke="#FFFFFF" stroke-width="2" opacity="0.8"/>
+              <path class="fabric-main" d="M65 72 L25 110 L45 170 L155 170 L175 110 L135 72 Z"/>
+              <rect class="fabric-dark" x="45" y="165" width="110" height="14"/>
+            </svg>
+          </div>
+          <div class="item-meta-overlay">
+            <div class="item-title">Alpine Crop Jacket</div>
+            <div class="item-price">$92</div>
+            <div class="item-tag">Cropped Fit • Breathable</div>
+          </div>
+        </div>
+
+        <!-- ITEM 5: Ribbed Sports Bra (Profile View) -->
+        <div class="clothing-item is-profile" data-id="5" data-title="Ribbed Sports Bra" data-price="48" data-tag="Sculpt Support" onclick="selectGarment(this)">
+          <div class="hanger-assembly">
+            <div class="hanger-hook"></div>
+            <div class="hanger-frame"></div>
+          </div>
+          <div class="garment-card">
+            <svg class="garment-svg" viewBox="0 0 200 240" fill="none">
+              <path class="fabric-main" d="M68 50 C76 80 76 95 62 145 L138 145 C124 95 124 80 132 50 L115 50 C110 80 90 80 85 50 Z"/>
+              <rect class="fabric-shadow" x="60" y="145" width="80" height="18" rx="2"/>
+              <line x1="62" y1="150" x2="138" y2="150" stroke="#FFF" stroke-dasharray="2 2" opacity="0.3"/>
+            </svg>
+          </div>
+          <div class="item-meta-overlay">
+            <div class="item-title">Ribbed Sports Bra</div>
+            <div class="item-price">$48</div>
+            <div class="item-tag">Sculpting Support • Seamless</div>
+          </div>
+        </div>
+
+        <!-- ITEM 6: 5" Train Short (Profile View) -->
+        <div class="clothing-item is-profile" data-id="6" data-title="5&quot; Train Short" data-price="62" data-tag="Quick-Dry" onclick="selectGarment(this)">
+          <div class="hanger-assembly">
+            <div class="hanger-hook"></div>
+            <div class="hanger-frame"></div>
+          </div>
+          <div class="garment-card">
+            <svg class="garment-svg" viewBox="0 0 200 240" fill="none">
+              <rect class="fabric-shadow" x="45" y="50" width="110" height="24" rx="4"/>
+              <path class="fabric-main" d="M46 72 L154 72 L160 175 L115 175 L100 115 L85 175 L40 175 Z"/>
+              <line x1="125" y1="90" x2="142" y2="120" stroke="#111" stroke-width="2"/>
+            </svg>
+          </div>
+          <div class="item-meta-overlay">
+            <div class="item-title">5" Train Short</div>
+            <div class="item-price">$62</div>
+            <div class="item-tag">Quick-Dry • Zip Pocket</div>
+          </div>
+        </div>
+
+        <!-- ITEM 7: High-Rise Legging (Profile View) -->
+        <div class="clothing-item is-profile" data-id="7" data-title="High-Rise Legging" data-price="88" data-tag="Compression" onclick="selectGarment(this)">
+          <div class="hanger-assembly">
+            <div class="hanger-hook"></div>
+            <div class="hanger-frame"></div>
+          </div>
+          <div class="garment-card">
+            <svg class="garment-svg" viewBox="0 0 200 240" fill="none">
+              <rect class="fabric-shadow" x="55" y="45" width="90" height="32" rx="3"/>
+              <path class="fabric-main" d="M57 76 L143 76 L135 195 L110 195 L100 115 L90 195 L65 195 Z"/>
+            </svg>
+          </div>
+          <div class="item-meta-overlay">
+            <div class="item-title">High-Rise Legging</div>
+            <div class="item-price">$88</div>
+            <div class="item-tag">Compression • Pocket</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Active Item Action Bar & Size Picker -->
+    <div class="showroom-action-dock">
+      <div class="dock-size-picker">
+        <button class="size-btn" onclick="selectSize('XS', this)">XS</button>
+        <button class="size-btn" onclick="selectSize('S', this)">S</button>
+        <button class="size-btn active" onclick="selectSize('M', this)">M</button>
+        <button class="size-btn" onclick="selectSize('L', this)">L</button>
+        <button class="size-btn" onclick="selectSize('XL', this)">XL</button>
+      </div>
+
+      <button class="dock-cta-btn" onclick="addActiveToBag()">
+        <span id="activeCtaText">Add Elevate Quarter-Zip — $98</span>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+      </button>
+
+      <span class="dock-hint">Click any garment on the rack to pull forward</span>
+    </div>
+  </main>
+
+  <!-- Slide-out Bag Drawer -->
+  <div class="cart-overlay" id="cartOverlay" onclick="toggleCart(false)">
+    <div class="cart-drawer" onclick="event.stopPropagation()">
+      <div class="cart-head">
+        <h3>Shopping Bag (<span id="cartDrawerCount">0</span>)</h3>
+        <button class="cart-close" onclick="toggleCart(false)">&times;</button>
+      </div>
+      <div class="cart-items" id="cartItemsContainer">
+        <p class="cart-empty-msg" id="emptyMsg">Your bag is empty. Click any garment on the rack to inspect and add.</p>
+      </div>
+      <div class="cart-footer">
+        <div class="cart-subtotal">
+          <span>Subtotal</span>
+          <span id="cartTotalVal">$0.00</span>
+        </div>
+        <button class="checkout-btn" onclick="alert('Proceeding to Checkout...')">Checkout Now</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Interactive JavaScript Logic -->
+  <script>
+    // Palettes mapping
+    const palettes = {
+      olive: { base: '#4b5240', dark: '#363c2d', light: '#626b54', accent: '#788267' },
+      sand: { base: '#D5CEBF', dark: '#B5AC9B', light: '#E5DFD4', accent: '#C8BEAD' },
+      obsidian: { base: '#252729', dark: '#161718', light: '#3B3D40', accent: '#4E5054' },
+      clay: { base: '#8C5847', dark: '#6A4032', light: '#A86F5C', accent: '#BA7E6B' },
+      mist: { base: '#7A8982', dark: '#5E6B65', light: '#96A69F', accent: '#A5B5AE' }
+    };
+
+    let selectedSize = 'M';
+    let activeGarment = {
+      title: 'Elevate Quarter-Zip',
+      price: 98
+    };
+
+    let cartCount = 0;
+    let cartTotal = 0;
+
+    // Palette Switcher
+    function setPalette(key, btn) {
+      const p = palettes[key];
+      if (!p) return;
+
+      document.documentElement.style.setProperty('--fabric-base', p.base);
+      document.documentElement.style.setProperty('--fabric-dark', p.dark);
+      document.documentElement.style.setProperty('--fabric-light', p.light);
+      document.documentElement.style.setProperty('--fabric-accent', p.accent);
+
+      if (btn) {
+        document.querySelectorAll('.color-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      }
+
+      // Add swing animation to all clothes when color changes
+      triggerRackSway();
+    }
+
+    // Select Size
+    function selectSize(size, btn) {
+      selectedSize = size;
+      document.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+    }
+
+    // Garment Selection & Profile-to-Front Logic
+    function selectGarment(itemEl) {
+      if (itemEl.classList.contains('is-front')) {
+        // Trigger realistic sway
+        itemEl.classList.remove('swinging');
+        void itemEl.offsetWidth; // reflow
+        itemEl.classList.add('swinging');
+        return;
+      }
+
+      // Turn all other items to profile
+      document.querySelectorAll('.clothing-item').forEach(item => {
+        item.classList.remove('is-front');
+        item.classList.add('is-profile');
+        item.classList.remove('swinging');
+      });
+
+      // Bring clicked item to front
+      itemEl.classList.remove('is-profile');
+      itemEl.classList.add('is-front');
+      
+      // Trigger swing physics
+      void itemEl.offsetWidth;
+      itemEl.classList.add('swinging');
+
+      // Update Active Garment state
+      activeGarment.title = itemEl.getAttribute('data-title');
+      activeGarment.price = parseInt(itemEl.getAttribute('data-price'));
+
+      // Update Action Button
+      document.getElementById('activeCtaText').textContent = `Add ${activeGarment.title} — $${activeGarment.price}`;
+    }
+
+    // Trigger gentle sway along rack
+    function triggerRackSway() {
+      document.querySelectorAll('.clothing-item').forEach((item, index) => {
+        setTimeout(() => {
+          item.classList.remove('swinging');
+          void item.offsetWidth;
+          item.classList.add('swinging');
+        }, index * 60);
+      });
+    }
+
+    // Add To Bag Action
+    function addActiveToBag() {
+      cartCount++;
+      cartTotal += activeGarment.price;
+
+      document.getElementById('cartCount').textContent = cartCount;
+      document.getElementById('cartDrawerCount').textContent = cartCount;
+      document.getElementById('cartTotalVal').textContent = `$${cartTotal.toFixed(2)}`;
+
+      const emptyMsg = document.getElementById('emptyMsg');
+      if (emptyMsg) emptyMsg.style.display = 'none';
+
+      const container = document.getElementById('cartItemsContainer');
+      const row = document.createElement('div');
+      row.className = 'cart-item-row';
+      row.innerHTML = `
+        <div class="cart-item-thumb">
+          <svg width="34" height="34" viewBox="0 0 60 60"><rect width="60" height="60" rx="6" fill="var(--fabric-base)"/></svg>
+        </div>
+        <div class="cart-item-info">
+          <div class="cart-item-title">${activeGarment.title}</div>
+          <div class="cart-item-meta">Size: ${selectedSize} • Custom Colorway</div>
+          <div style="font-weight:700;">$${activeGarment.price}.00</div>
+        </div>
+      `;
+      container.appendChild(row);
+
+      toggleCart(true);
+    }
+
+    // Toggle Cart Drawer
+    function toggleCart(isOpen) {
+      const overlay = document.getElementById('cartOverlay');
+      if (isOpen) {
+        overlay.classList.add('open');
+      } else {
+        overlay.classList.remove('open');
+      }
+    }
+  </script>
+</body>
+</html>
